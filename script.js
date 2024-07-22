@@ -1,5 +1,22 @@
 // Hàm tính toán sát thương
 function calculateDamage() {
+	    // Kiểm tra các trường bắt buộc
+    const requiredFields = ['atk', 'def', 'currentHP', 'maxHP', 'distance'];
+    let missingFields = [];
+
+    for (let field of requiredFields) {
+        const value = document.getElementById(field).value.trim();
+        if (value === '') {
+            missingFields.push(field);
+        }
+    }
+
+    if (missingFields.length > 0) {
+        alert(`Vui lòng nhập đầy đủ các trường sau: ${missingFields.join(', ')}`);
+        return; // Dừng hàm nếu có trường chưa được nhập
+    }
+	
+	
     // Lấy giá trị từ input
     const atk = parseFloat(document.getElementById('atk').value);
     const dmgBuff = parseFloat(document.getElementById('dmgBuff').value) / 100 || 0;
@@ -112,18 +129,20 @@ function displayResults(damage, hitRate, dotDamage, params) {
         output += `2. Áp dụng hệ số sát thương cho vũ khí ${params.rangedWeaponType}: ${params.atk * (1 + params.dmgBuff)} * ${params.damageMultiplier} = ${params.atk * (1 + params.dmgBuff) * params.damageMultiplier}\n`;
     }
     
-    if (params.attackerElement === 'normal') {
-        let bonus = 1;
-        if (params.hpPercentage <= 25) bonus = 1.20;
-        else if (params.hpPercentage <= 50) bonus = 1.15;
-        else if (params.hpPercentage <= 75) bonus = 1.10;
-        else if (params.hpPercentage < 100) bonus = 1.05;
-        output += `3. Áp dụng bonus nguyên tố Normal (HP ${params.hpPercentage.toFixed(2)}%): ${params.atk * (1 + params.dmgBuff) * params.damageMultiplier} * ${bonus} = ${params.atk * (1 + params.dmgBuff) * params.damageMultiplier * bonus}\n`;
-    } else if (params.attackerElement === 'explosive') {
-        const hpLost = (100 - params.hpPercentage) / 10;
-        const defIgnore = hpLost * 0.025;
-        output += `3. Áp dụng nguyên tố Explosive: Bỏ qua ${(defIgnore * 100).toFixed(2)}% DEF\n`;
-    }
+if (params.attackerElement === 'normal') {
+    let bonus = 1;
+    if (params.hpPercentage <= 25) bonus = 1.20;
+    else if (params.hpPercentage <= 50) bonus = 1.15;
+    else if (params.hpPercentage <= 75) bonus = 1.10;
+    else if (params.hpPercentage < 100) bonus = 1.05;
+    output += `3. Áp dụng bonus nguyên tố Normal (HP ${params.hpPercentage.toFixed(2)}%): ${params.atk * (1 + params.dmgBuff) * params.damageMultiplier} * ${bonus} = ${params.atk * (1 + params.dmgBuff) * params.damageMultiplier * bonus}\n`;
+} else if (params.attackerElement === 'explosive') {
+    const hpLost = (100 - params.hpPercentage) / 10;
+    const defIgnore = hpLost * 0.025;
+    output += `3. Áp dụng nguyên tố Explosive: Bỏ qua ${(defIgnore * 100).toFixed(2)}% DEF\n`;
+} else {
+    output += `3. Nguyên tố Khác: Không có hiệu ứng đặc biệt\n`;
+}
 
     if (params.defenderElement !== 'none') {
         output += `4. Áp dụng hiệu ứng ${params.defenderElement}: `;
@@ -181,6 +200,7 @@ function showHelp() {
                 <ul style="color: #34495e;">
                     <li><span style="color: #27ae60;">Normal:</span> Tăng sát thương khi HP đối phương giảm (5%/10%/15%/20% khi HP dưới 100%/75%/50%/25%).</li>
                     <li><span style="color: #27ae60;">Explosive:</span> Bỏ qua 2.5% DEF cho mỗi 10% máu đã mất của đối phương.</li>
+					<li><span style="color: #27ae60;">Khác:</span> Không có hiệu ứng đặc biệt.</li>
                 </ul>
             </li>
         </ul>

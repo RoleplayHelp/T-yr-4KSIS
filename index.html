@@ -27,6 +27,7 @@
                 <select id="attackerElement" required>
                     <option value="normal">Normal</option>
                     <option value="explosive">Explosive</option>
+					<option value="other">Khác</option>
                 </select>
             </div>
         </div>
@@ -51,7 +52,7 @@
     </div>
     <div class="container">
         <h2>Khoảng Cách và Hit-rate</h2>
-        <input type="number" id="distance" placeholder="Khoảng cách đi (m)" required>
+        <input type="number" id="distance" placeholder="Khoảng cách giữa 2 mecha (m)" required>
     </div>
     <button onclick="calculateDamage()">Tính Toán Sát Thương</button>
     <div id="result"></div>
