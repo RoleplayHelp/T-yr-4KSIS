@@ -14,13 +14,19 @@
                 <input type="number" id="atk" placeholder="ATK" required>
                 <input type="number" id="dmgBuff" placeholder="Buff khuếch đại sát thương (%, không bắt buộc)">
                 <input type="number" id="penetration" placeholder="Buff xuyên kháng (%, không bắt buộc)">
-                <select id="weaponType">
+                <select id="weaponType" required>
                     <option value="melee">Melee</option>
                     <option value="ranged">Ranged</option>
                 </select>
-                <select id="element">
+                <select id="rangedWeaponType" style="display: none;">
+                    <option value="mainArmament">Main Armament</option>
+                    <option value="secondaryArmament">Secondary Armament</option>
+                    <option value="missile">Missile</option>
+                    <option value="ultimateWeapon">Ultimate Weapon</option>
+                </select>
+                <select id="attackerElement" required>
                     <option value="normal">Normal</option>
-                    <option value="other">Khác</option>
+                    <option value="explosive">Explosive</option>
                 </select>
             </div>
         </div>
@@ -28,10 +34,17 @@
             <div class="container">
                 <h2>Người Phòng Thủ (Defender)</h2>
                 <input type="number" id="def" placeholder="DEF" required>
-                <input type="number" id="hp" placeholder="HP hiện tại (%)" required>
-                <select id="block">
+                <input type="number" id="currentHP" placeholder="HP hiện tại" required>
+                <input type="number" id="maxHP" placeholder="HP tối đa" required>
+                <select id="block" required>
                     <option value="false">Không block</option>
                     <option value="true">Có block</option>
+                </select>
+                <select id="defenderElement" required>
+                    <option value="none">Không có hiệu ứng</option>
+                    <option value="burn">Burn</option>
+                    <option value="poison">Poison</option>
+                    <option value="beam">Beam</option>
                 </select>
             </div>
         </div>
@@ -44,6 +57,14 @@
     <div id="result"></div>
     <div class="copyright">
         © 2024 Damage Calculator. Bản quyền thuộc về Discord: rafine7262
+    </div>
+    <button id="helpButton" class="help-button">Help</button>
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Hướng dẫn sử dụng Damage Calculator</h2>
+            <div id="helpContent"></div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
