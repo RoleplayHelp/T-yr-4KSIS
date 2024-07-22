@@ -1,18 +1,28 @@
 // Hàm tính toán sát thương
 function calculateDamage() {
-	    // Kiểm tra các trường bắt buộc
-    const requiredFields = ['atk', 'def', 'currentHP', 'maxHP', 'distance'];
+    const errorMessageElement = document.getElementById('errorMessage');
+    errorMessageElement.style.display = 'none'; // Ẩn thông báo lỗi cũ
+
+    // Kiểm tra các trường bắt buộc
+    const requiredFields = [
+        { id: 'atk', name: 'ATK' },
+        { id: 'def', name: 'DEF' },
+        { id: 'currentHP', name: 'HP hiện tại' },
+        { id: 'maxHP', name: 'HP tối đa' },
+        { id: 'distance', name: 'Khoảng cách' }
+    ];
     let missingFields = [];
 
     for (let field of requiredFields) {
-        const value = document.getElementById(field).value.trim();
+        const value = document.getElementById(field.id).value.trim();
         if (value === '') {
-            missingFields.push(field);
+            missingFields.push(field.name);
         }
     }
 
     if (missingFields.length > 0) {
-        alert(`Vui lòng nhập đầy đủ các trường sau: ${missingFields.join(', ')}`);
+        errorMessageElement.textContent = `Vui lòng nhập đầy đủ các trường sau: ${missingFields.join(', ')}`;
+        errorMessageElement.style.display = 'block';
         return; // Dừng hàm nếu có trường chưa được nhập
     }
 	
