@@ -127,7 +127,7 @@ function displayResults(damage, hitRate, dotDamage, params) {
 
     // Hiển thị kết quả chính
     output += `<div class="main-result">
-        <p><strong>Sát thương phải nhận:</strong> <span class="highlight">${damage.toFixed(2)}</span></p>
+        <p><strong>Sát thương gây ra:</strong> <span class="highlight">${damage.toFixed(2)}</span></p>
         <p><strong>Hit-rate:</strong> <span class="highlight">${(hitRate * 100).toFixed(2)}%</span></p>`;
     
     if (dotDamage > 0) {
@@ -139,14 +139,14 @@ function displayResults(damage, hitRate, dotDamage, params) {
     // Hiển thị công thức tính sát thương
     output += '<h4>Công thức tính sát thương:</h4>';
     output += '<pre>';
-    output += `1. Sát thương cơ bản = ATK = ${params.atk}\n`;
+    output += `1. Sát thương cơ bản = ATK = ${params.atk.toFixed(2)}\n`;
     
     if (params.weaponType === 'ranged') {
-        output += `2. Áp dụng hệ số sát thương cho vũ khí ${params.rangedWeaponType}: ${params.atk} * ${params.weaponDamageMultiplier} = ${params.atk * params.weaponDamageMultiplier}\n`;
+        output += `2. Áp dụng hệ số sát thương cho vũ khí ${params.rangedWeaponType}: ${params.atk.toFixed(2)} * ${params.weaponDamageMultiplier.toFixed(2)} = ${(params.atk * params.weaponDamageMultiplier).toFixed(2)}\n`;
     }
     
     if (params.attackerElement === 'normal') {
-        output += `3. Áp dụng bonus nguyên tố Normal (HP ${params.hpPercentage.toFixed(2)}%): ${params.atk * params.weaponDamageMultiplier} * ${params.elementalMultiplier} = ${params.atk * params.weaponDamageMultiplier * params.elementalMultiplier}\n`;
+        output += `3. Áp dụng bonus nguyên tố Normal (HP ${params.hpPercentage.toFixed(2)}%): ${(params.atk * params.weaponDamageMultiplier).toFixed(2)} * ${params.elementalMultiplier.toFixed(2)} = ${(params.atk * params.weaponDamageMultiplier * params.elementalMultiplier).toFixed(2)}\n`;
     } else if (params.attackerElement === 'explosive') {
         const hpLost = (100 - params.hpPercentage) / 10;
         const defIgnore = hpLost * 0.025;
@@ -156,20 +156,20 @@ function displayResults(damage, hitRate, dotDamage, params) {
     }
 
     output += `4. Áp dụng khuếch đại sát thương và giảm sát thương:\n`;
-    output += `   Hệ số cuối cùng = 1 + ${params.dmgBuff} (khuếch đại) - ${params.damageReduction} (giảm) = ${params.damageMultiplier}\n`;
-    output += `   Sát thương sau khi áp dụng = ${params.atk * params.weaponDamageMultiplier * params.elementalMultiplier} * ${params.damageMultiplier} = ${params.atk * params.weaponDamageMultiplier * params.elementalMultiplier * params.damageMultiplier}\n`;
+    output += `   Hệ số cuối cùng = 1 + ${params.dmgBuff.toFixed(2)} (khuếch đại) - ${params.damageReduction.toFixed(2)} (giảm) = ${params.damageMultiplier.toFixed(2)}\n`;
+    output += `   Sát thương sau khi áp dụng = ${(params.atk * params.weaponDamageMultiplier * params.elementalMultiplier).toFixed(2)} * ${params.damageMultiplier.toFixed(2)} = ${(params.atk * params.weaponDamageMultiplier * params.elementalMultiplier * params.damageMultiplier).toFixed(2)}\n`;
 
     if (params.defenderElement !== 'none') {
         output += `5. Áp dụng hiệu ứng ${params.defenderElement}: `;
         if (params.defenderElement === 'burn' || params.defenderElement === 'beam') {
-            output += `Giảm ${params.defReduction * 100}% DEF\n`;
+            output += `Giảm ${(params.defReduction * 100).toFixed(2)}% DEF\n`;
         }
         if (params.defenderElement === 'burn' || params.defenderElement === 'poison') {
-            output += `   Gây thêm sát thương DoT: 3% của ${params.maxHP} = ${dotDamage.toFixed(2)}\n`;
+            output += `   Gây thêm sát thương DoT: 3% của ${params.maxHP.toFixed(2)} = ${dotDamage.toFixed(2)}\n`;
         }
     }
 
-    output += `6. Phòng thủ hiệu quả = DEF * (1 - defReduction) * (2 nếu block) * (1 - penetration) = ${params.def} * (1 - ${params.defReduction}) * ${params.hasBlock ? 2 : 1} * (1 - ${params.penetration}) = ${params.effectiveDef.toFixed(2)}\n`;
+    output += `6. Phòng thủ hiệu quả = DEF * (1 - defReduction) * (2 nếu block) * (1 - penetration) = ${params.def.toFixed(2)} * (1 - ${params.defReduction.toFixed(2)}) * ${params.hasBlock ? 2 : 1} * (1 - ${params.penetration.toFixed(2)}) = ${params.effectiveDef.toFixed(2)}\n`;
     output += `7. Sát thương cuối cùng = Max(0, Sát thương - Phòng thủ hiệu quả) = ${damage.toFixed(2)}`;
     output += '</pre>';
 
@@ -178,7 +178,7 @@ function displayResults(damage, hitRate, dotDamage, params) {
     output += '<pre>';
     output += `Weapon Range: ${params.weaponType === 'melee' ? 15 : 70}m\n`;
     if (params.distance > (params.weaponType === 'melee' ? 15 : 70)) {
-        output += `Khoảng cách (${params.distance}m) vượt quá tầm đánh tối đa, Hit-rate = 0%\n`;
+        output += `Khoảng cách (${params.distance.toFixed(2)}m) vượt quá tầm đánh tối đa, Hit-rate = 0%\n`;
     } else {
         output += `Hit-rate = Max(0, 1 - (Math.floor(distance / (weaponRange / 3)) * 0.2))\n`;
         output += `         = Max(0, 1 - (${Math.floor(params.distance / ((params.weaponType === 'melee' ? 15 : 70) / 3))} * 0.2))\n`;
