@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <h1>Damage Calculator Nâng Cao</h1>
     <div class="row">
         <div class="column">
             <div class="container">
@@ -27,7 +28,7 @@
                 <select id="attackerElement" required>
                     <option value="normal">Normal</option>
                     <option value="explosive">Explosive</option>
-					<option value="other">Khác</option>
+                    <option value="other">Khác</option>
                 </select>
             </div>
         </div>
@@ -47,21 +48,24 @@
                     <option value="poison">Poison</option>
                     <option value="beam">Beam</option>
                 </select>
-				<input type="number" id="damageReduction" placeholder="Giảm sát thương nhận vào (%, Không bắt buộc)" min="0" max="200">
+                <input type="number" id="damageReduction" placeholder="Giảm sát thương nhận vào (%)" min="0" max="100">
             </div>
         </div>
     </div>
     <div class="container">
         <h2>Khoảng Cách và Hit-rate</h2>
-        <input type="number" id="distance" placeholder="Khoảng cách giữa 2 mecha (m)" required>
+        <input type="number" id="distance" placeholder="Khoảng cách đi (m)" required>
     </div>
-	<div id="errorMessage" style="color: red; margin-bottom: 10px; display: none;"></div>
-    <button onclick="calculateDamage()">Tính Toán Sát Thương</button>
+    <div id="errorMessage" style="color: red; margin-bottom: 10px; display: none;"></div>
+    <div class="button-container">
+        <button onclick="calculateDamage()">Tính Toán Sát Thương</button>
+        <button id="helpButton">Help</button>
+    </div>
     <div id="result"></div>
+    <div id="lastUpdate" style="text-align: center; margin-top: 20px; font-size: 0.8em; color: #666;"></div>
     <div class="copyright">
         © 2024 Damage Calculator. Bản quyền thuộc về Discord: rafine7262
     </div>
-    <button id="helpButton" class="help-button">Help</button>
     <div id="helpModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
