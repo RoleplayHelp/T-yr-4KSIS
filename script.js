@@ -195,51 +195,51 @@ function showHelp() {
     const content = document.getElementById('helpContent');
     
     content.innerHTML = `
-        <h3 style="color: #4a90e2;">Giải thích các trường nhập liệu:</h3>
-        <h4 style="color: #e74c3c;">Người Tấn Công (Attacker):</h4>
-        <ul style="color: #2c3e50;">
-            <li><strong style="color: #e67e22;">ATK:</strong> Sức tấn công của người tấn công.</li>
-            <li><strong style="color: #e67e22;">Buff khuếch đại sát thương:</strong> Phần trăm tăng sát thương (không bắt buộc).</li>
-            <li><strong style="color: #e67e22;">Buff xuyên kháng:</strong> Phần trăm bỏ qua phòng thủ của đối phương (không bắt buộc).</li>
-            <li><strong style="color: #e67e22;">Loại vũ khí:</strong> Melee (cận chiến, tầm đánh 15m) hoặc Ranged (tầm xa, tầm đánh 70m).</li>
-            <li><strong style="color: #e67e22;">Loại vũ khí tầm xa:</strong>
-                <ul style="color: #34495e;">
-                    <li><span style="color: #16a085;">Main Armament:</span> 80% ATK, nạp 10% IS, 2 lượt nạp đạn.</li>
-                    <li><span style="color: #16a085;">Secondary Armament:</span> 60% ATK, nạp 8% IS, 1 lượt nạp đạn.</li>
-                    <li><span style="color: #16a085;">Missile:</span> 40% ATK, nạp 5% IS, 2 lượt nạp đạn. Có thể dùng cùng lúc với vũ khí khác.</li>
-                    <li><span style="color: #16a085;">Ultimate Weapon:</span> 150% ATK, nạp 20% IS, 7 lượt nạp đạn. Chỉ có ở mecha bậc SS trở lên.</li>
+        <h3>Giải thích các trường nhập liệu:</h3>
+        <h4 class="attacker">Người Tấn Công (Attacker):</h4>
+        <ul>
+            <li><strong>ATK:</strong> <span class="description">Sức tấn công của người tấn công.</span></li>
+            <li><strong>Buff khuếch đại sát thương:</strong> <span class="description">Phần trăm tăng sát thương (không bắt buộc).</span></li>
+            <li><strong>Buff xuyên kháng:</strong> <span class="description">Phần trăm bỏ qua phòng thủ của đối phương (không bắt buộc).</span></li>
+            <li><strong>Loại vũ khí:</strong> <span class="description">Melee (cận chiến, tầm đánh <span class="value">15m</span>) hoặc Ranged (tầm xa, tầm đánh <span class="value">70m</span>).</span></li>
+            <li><strong>Loại vũ khí tầm xa:</strong>
+                <ul>
+                    <li><span class="weapon">Main Armament:</span> <span class="description"><span class="value">80% ATK</span>, nạp <span class="value">10% IS</span>, <span class="value">2 lượt</span> nạp đạn.</span></li>
+                    <li><span class="weapon">Secondary Armament:</span> <span class="description"><span class="value">60% ATK</span>, nạp <span class="value">8% IS</span>, <span class="value">1 lượt</span> nạp đạn.</span></li>
+                    <li><span class="weapon">Missile:</span> <span class="description"><span class="value">40% ATK</span>, nạp <span class="value">5% IS</span>, <span class="value">2 lượt</span> nạp đạn. Có thể dùng cùng lúc với vũ khí khác.</span></li>
+                    <li><span class="weapon">Ultimate Weapon:</span> <span class="description"><span class="value">150% ATK</span>, nạp <span class="value">20% IS</span>, <span class="value">7 lượt</span> nạp đạn. Chỉ có ở mecha bậc SS trở lên.</span></li>
                 </ul>
             </li>
-            <li><strong style="color: #e67e22;">Nguyên tố:</strong>
-                <ul style="color: #34495e;">
-                   <li><span style="color: #27ae60;">Normal:</span> Tăng sát thương khi HP đối phương giảm (5%/10%/15%/20% khi HP dưới 100%/75%/50%/25%).</li>
-                    <li><span style="color: #27ae60;">Explosive:</span> Bỏ qua 2.5% DEF cho mỗi 10% máu đã mất của đối phương.</li>
-                    <li><span style="color: #27ae60;">Khác:</span> Không có hiệu ứng đặc biệt.</li>
+            <li><strong>Nguyên tố:</strong>
+                <ul>
+                    <li><span class="element">Normal:</span> <span class="description">Tăng sát thương khi HP đối phương giảm (<span class="value">5%/10%/15%/20%</span> khi HP dưới <span class="value">100%/75%/50%/25%</span>).</span></li>
+                    <li><span class="element">Explosive:</span> <span class="description">Bỏ qua <span class="value">2.5% DEF</span> cho mỗi <span class="value">10%</span> máu đã mất của đối phương.</span></li>
+                    <li><span class="element">Khác:</span> <span class="description">Không có hiệu ứng đặc biệt.</span></li>
                 </ul>
             </li>
         </ul>
-        <h4 style="color: #3498db;">Người Phòng Thủ (Defender):</h4>
-        <ul style="color: #2c3e50;">
-            <li><strong style="color: #9b59b6;">DEF:</strong> Chỉ số phòng thủ của người phòng thủ.</li>
-            <li><strong style="color: #9b59b6;">HP hiện tại:</strong> Lượng máu hiện tại của người phòng thủ.</li>
-            <li><strong style="color: #9b59b6;">HP tối đa:</strong> Lượng máu tối đa của người phòng thủ.</li>
-            <li><strong style="color: #9b59b6;">Block:</strong> Chọn có block hay không (nếu có, DEF được nhân đôi).</li>
-            <li><strong style="color: #9b59b6;">Hiệu ứng:</strong>
-                <ul style="color: #34495e;">
-                    <li><span style="color: #c0392b;">Burn:</span> Gây sát thương 3% HP tối đa, giảm 10% DEF.</li>
-                    <li><span style="color: #c0392b;">Poison:</span> Gây sát thương 3% HP tối đa.</li>
-                    <li><span style="color: #c0392b;">Beam:</span> Giảm 20% DEF.</li>
+        <h4 class="defender">Người Phòng Thủ (Defender):</h4>
+        <ul>
+            <li><strong>DEF:</strong> <span class="description">Chỉ số phòng thủ của người phòng thủ.</span></li>
+            <li><strong>HP hiện tại:</strong> <span class="description">Lượng máu hiện tại của người phòng thủ.</span></li>
+            <li><strong>HP tối đa:</strong> <span class="description">Lượng máu tối đa của người phòng thủ.</span></li>
+            <li><strong>Block:</strong> <span class="description">Chọn có block hay không (nếu có, DEF được nhân đôi).</span></li>
+            <li><strong>Hiệu ứng:</strong>
+                <ul>
+                    <li><span class="effect">Burn:</span> <span class="description">Gây sát thương <span class="value">3% HP tối đa</span>, giảm <span class="value">10% DEF</span>.</span></li>
+                    <li><span class="effect">Poison:</span> <span class="description">Gây sát thương <span class="value">3% HP tối đa</span>.</span></li>
+                    <li><span class="effect">Beam:</span> <span class="description">Giảm <span class="value">20% DEF</span>.</span></li>
                 </ul>
             </li>
-            <li><strong style="color: #9b59b6;">Giảm sát thương nhận vào (%):</strong> Phần trăm giảm sát thương của người phòng thủ. Sẽ được trừ trực tiếp từ % khuếch đại sát thương của người tấn công.</li>
+            <li><strong>Giảm sát thương nhận vào (%):</strong> <span class="description">Phần trăm giảm sát thương của người phòng thủ. Sẽ được trừ trực tiếp từ % khuếch đại sát thương của người tấn công.</span></li>
         </ul>
-        <h4 style="color: #f39c12;">Khoảng Cách:</h4>
-        <ul style="color: #2c3e50;">
-            <li>Khoảng cách giữa người tấn công và người phòng thủ, ảnh hưởng đến hit-rate.</li>
-            <li>Khoảng cách tối đa: Melee 15m, Ranged 70m. Vượt quá sẽ có hit-rate 0%.</li>
+        <h4 class="distance">Khoảng Cách:</h4>
+        <ul>
+            <li><span class="description">Khoảng cách giữa người tấn công và người phòng thủ, ảnh hưởng đến hit-rate.</span></li>
+            <li><span class="description">Khoảng cách tối đa: Melee <span class="value">15m</span>, Ranged <span class="value">70m</span>. Vượt quá sẽ có hit-rate 0%.</span></li>
         </ul>
-        <h3 style="color: #2ecc71;">Cách tính Hit-rate:</h3>
-        <p style="color: #2c3e50;">Hit-rate giảm 20% cho mỗi 1/3 tầm đánh của vũ khí. Tầm đánh: Melee 15m, Ranged 70m.</p>
+        <h4>Cách tính Hit-rate:</h4>
+        <p class="description">Hit-rate giảm <span class="value">20%</span> cho mỗi <span class="value">1/3</span> tầm đánh của vũ khí. Tầm đánh: Melee <span class="value">15m</span>, Ranged <span class="value">70m</span>.</p>
     `;
     
     modal.style.display = "block";
