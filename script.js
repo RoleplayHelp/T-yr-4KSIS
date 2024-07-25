@@ -109,38 +109,37 @@ function calculateDamage() {
     let finalDamage = Math.max(0, baseDamage * damageMultiplier - effectiveDef);
 
     // Tính toán hit-rate
-    let hitRate = 1;
+    let baseHitRate = 1;
     const maxRange = weaponType === 'melee' ? 15 : 70;
     if (distance > maxRange) {
-        hitRate = 0;
+        baseHitRate = 0;
     } else {
         const hitRateReduction = Math.floor(distance / (maxRange / 3)) * 0.2;
-        hitRate = Math.max(0, 1 - hitRateReduction);
+        baseHitRate = Math.max(0, 1 - hitRateReduction);
     }
 
-    // Tính toán Final Accuracy
-    let baseAcc = hitRate;
+    // Áp dụng Evasion và các modifier
+    let finalHitRate = baseHitRate;
     if (defenderAction === 'evasion') {
-        baseAcc *= (1 - evasion);
+        finalHitRate *= (1 - evasion);
     }
-    let finalAcc = baseAcc + accModifier - evaModifier;
-    finalAcc = Math.max(0, Math.min(1, finalAcc));
+    finalHitRate += accModifier - evaModifier;
+    finalHitRate = Math.max(0, Math.min(1, finalHitRate)); // Đảm bảo hit-rate nằm trong khoảng [0, 1]
 
     // Hiển thị kết quả
-    displayResults(finalDamage, hitRate, dotDamage, finalAcc, {
-        atk, dmgBuff, penetration, weaponType, rangedWeaponType, attackerElement, def, currentHP, maxHP, defenderAction, evasion, distance, defenderElement, defReduction, effectiveDef, hpPercentage, damageMultiplier, damageReduction, weaponDamageMultiplier, elementalMultiplier, accModifier, evaModifier
+    displayResults(finalDamage, finalHitRate, dotDamage, {
+        atk, dmgBuff, penetration, weaponType, rangedWeaponType, attackerElement, def, currentHP, maxHP, defenderAction, evasion, distance, defenderElement, defReduction, effectiveDef, hpPercentage, damageMultiplier, damageReduction, weaponDamageMultiplier, elementalMultiplier, accModifier, evaModifier, baseHitRate
     });
 }
 
-function displayResults(damage, hitRate, dotDamage, finalAcc, params) {
+function displayResults(damage, hitRate, dotDamage, params) {
     const resultElement = document.getElementById('result');
     let output = '<h3>Kết quả tính toán:</h3>';
 
     // Hiển thị kết quả chính
     output += `<div class="main-result">
         <p><strong>Sát thương gây ra:</strong> <span class="highlight">${damage.toFixed(2)}</span></p>
-        <p><strong>Hit-rate:</strong> <span class="highlight">${(hitRate * 100).toFixed(2)}%</span></p>
-        <p><strong>Final Accuracy:</strong> <span class="highlight">${(finalAcc * 100).toFixed(2)}%</span></p>`;
+        <p><strong>Hit-rate:</strong> <span class="highlight">${(hitRate * 100).toFixed(2)}%</span></p>`;
     
     if (dotDamage > 0) {
         output += `<p><strong>Sát thương theo thời gian (DoT):</strong> <span class="highlight">${dotDamage.toFixed(2)}</span></p>`;
@@ -184,27 +183,14 @@ function displayResults(damage, hitRate, dotDamage, finalAcc, params) {
     output += `6. Phòng thủ hiệu quả = DEF * (1 - defReduction) * (2 nếu block) * (1 - penetration) = ${params.def.toFixed(2)} * (1 - ${params.defReduction.toFixed(2)}) * ${params.defenderAction === 'block' ? 2 : 1} * (1 - ${params.penetration.toFixed(2)}) = ${params.effectiveDef.toFixed(2)}\n`;
     output += `7. Sát thương cuối cùng = Max(0, Sát thương - Phòng thủ hiệu quả) = ${damage.toFixed(2)}\n`;
     
-    output += `\n8. Tính toán Final Accuracy:\n`;
-    output += `   Base Hit-rate: ${(hitRate * 100).toFixed(2)}%\n`;
+    output += `\n8. Tính toán Hit-rate:\n`;
+    output += `   Base Hit-rate: ${(params.baseHitRate * 100).toFixed(2)}%\n`;
     if (params.defenderAction === 'evasion') {
-        output += `   Áp dụng Evasion: ${(hitRate * 100).toFixed(2)}% * (1 - ${(params.evasion * 100).toFixed(2)}%) = ${(hitRate * (1 - params.evasion) * 100).toFixed(2)}%\n`;
+        output += `   Áp dụng Evasion: ${(params.baseHitRate * 100).toFixed(2)}% * (1 - ${(params.evasion * 100).toFixed(2)}%) = ${(params.baseHitRate * (1 - params.evasion) * 100).toFixed(2)}%\n`;
     }
     output += `   Áp dụng Acc Modifier: +${(params.accModifier * 100).toFixed(2)}%\n`;
     output += `   Áp dụng Eva Modifier: -${(params.evaModifier * 100).toFixed(2)}%\n`;
-    output += `   Final Accuracy: ${(finalAcc * 100).toFixed(2)}%\n`;
-    output += '</pre>';
-
-    // Hiển thị công thức tính hit-rate
-    output += '<h4>Công thức tính Hit-rate:</h4>';
-    output += '<pre>';
-    output += `Weapon Range: ${params.weaponType === 'melee' ? 15 : 70}m\n`;
-    if (params.distance > (params.weaponType === 'melee' ? 15 : 70)) {
-        output += `Khoảng cách (${params.distance.toFixed(2)}m) vượt quá tầm đánh tối đa, Hit-rate = 0%\n`;
-    } else {
-        output += `Hit-rate = Max(0, 1 - (Math.floor(distance / (weaponRange / 3)) * 0.2))\n`;
-        output += `         = Max(0, 1 - (${Math.floor(params.distance / ((params.weaponType === 'melee' ? 15 : 70) / 3))} * 0.2))\n`;
-        output += `         = ${hitRate.toFixed(2)}`;
-    }
+    output += `   Final Hit-rate: ${(hitRate * 100).toFixed(2)}%\n`;
     output += '</pre>';
 
     resultElement.innerHTML = output;
