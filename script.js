@@ -33,10 +33,13 @@ function calculateDamage() {
     const weaponType = document.getElementById('weaponType').value;
     const rangedWeaponType = document.getElementById('rangedWeaponType').value;
     const attackerElement = document.getElementById('attackerElement').value;
+    const accModifier = parseFloat(document.getElementById('accModifier').value) / 100 || 0;
     const def = parseFloat(document.getElementById('def').value);
     const currentHP = parseFloat(document.getElementById('currentHP').value);
     const maxHP = parseFloat(document.getElementById('maxHP').value);
-    const hasBlock = document.getElementById('block').value === 'true';
+    const defenderAction = document.getElementById('defenderAction').value;
+    const evasion = parseFloat(document.getElementById('evasion').value) / 100 || 0;
+    const evaModifier = parseFloat(document.getElementById('evaModifier').value) / 100 || 0;
     const distance = parseFloat(document.getElementById('distance').value);
     const defenderElement = document.getElementById('defenderElement').value;
     const damageReduction = parseFloat(document.getElementById('damageReduction').value) / 100 || 0;
@@ -102,7 +105,7 @@ function calculateDamage() {
     damageMultiplier = Math.max(0, damageMultiplier); // Đảm bảo hệ số không âm
 
     // Tính toán sát thương cuối cùng
-    effectiveDef *= (hasBlock ? 2 : 1) * (1 - penetration);
+    effectiveDef *= (defenderAction === 'block' ? 2 : 1) * (1 - penetration);
     let finalDamage = Math.max(0, baseDamage * damageMultiplier - effectiveDef);
 
     // Tính toán hit-rate
@@ -115,20 +118,29 @@ function calculateDamage() {
         hitRate = Math.max(0, 1 - hitRateReduction);
     }
 
+    // Tính toán Final Accuracy
+    let baseAcc = hitRate;
+    if (defenderAction === 'evasion') {
+        baseAcc *= (1 - evasion);
+    }
+    let finalAcc = baseAcc + accModifier - evaModifier;
+    finalAcc = Math.max(0, Math.min(1, finalAcc));
+
     // Hiển thị kết quả
-    displayResults(finalDamage, hitRate, dotDamage, {
-        atk, dmgBuff, penetration, weaponType, rangedWeaponType, attackerElement, def, currentHP, maxHP, hasBlock, distance, defenderElement, defReduction, effectiveDef, hpPercentage, damageMultiplier, damageReduction, weaponDamageMultiplier, elementalMultiplier
+    displayResults(finalDamage, hitRate, dotDamage, finalAcc, {
+        atk, dmgBuff, penetration, weaponType, rangedWeaponType, attackerElement, def, currentHP, maxHP, defenderAction, evasion, distance, defenderElement, defReduction, effectiveDef, hpPercentage, damageMultiplier, damageReduction, weaponDamageMultiplier, elementalMultiplier, accModifier, evaModifier
     });
 }
 
-function displayResults(damage, hitRate, dotDamage, params) {
+function displayResults(damage, hitRate, dotDamage, finalAcc, params) {
     const resultElement = document.getElementById('result');
     let output = '<h3>Kết quả tính toán:</h3>';
 
     // Hiển thị kết quả chính
     output += `<div class="main-result">
         <p><strong>Sát thương gây ra:</strong> <span class="highlight">${damage.toFixed(2)}</span></p>
-        <p><strong>Hit-rate:</strong> <span class="highlight">${(hitRate * 100).toFixed(2)}%</span></p>`;
+        <p><strong>Hit-rate:</strong> <span class="highlight">${(hitRate * 100).toFixed(2)}%</span></p>
+        <p><strong>Final Accuracy:</strong> <span class="highlight">${(finalAcc * 100).toFixed(2)}%</span></p>`;
     
     if (dotDamage > 0) {
         output += `<p><strong>Sát thương theo thời gian (DoT):</strong> <span class="highlight">${dotDamage.toFixed(2)}</span></p>`;
@@ -169,8 +181,17 @@ function displayResults(damage, hitRate, dotDamage, params) {
         }
     }
 
-    output += `6. Phòng thủ hiệu quả = DEF * (1 - defReduction) * (2 nếu block) * (1 - penetration) = ${params.def.toFixed(2)} * (1 - ${params.defReduction.toFixed(2)}) * ${params.hasBlock ? 2 : 1} * (1 - ${params.penetration.toFixed(2)}) = ${params.effectiveDef.toFixed(2)}\n`;
-    output += `7. Sát thương cuối cùng = Max(0, Sát thương - Phòng thủ hiệu quả) = ${damage.toFixed(2)}`;
+    output += `6. Phòng thủ hiệu quả = DEF * (1 - defReduction) * (2 nếu block) * (1 - penetration) = ${params.def.toFixed(2)} * (1 - ${params.defReduction.toFixed(2)}) * ${params.defenderAction === 'block' ? 2 : 1} * (1 - ${params.penetration.toFixed(2)}) = ${params.effectiveDef.toFixed(2)}\n`;
+    output += `7. Sát thương cuối cùng = Max(0, Sát thương - Phòng thủ hiệu quả) = ${damage.toFixed(2)}\n`;
+    
+    output += `\n8. Tính toán Final Accuracy:\n`;
+    output += `   Base Hit-rate: ${(hitRate * 100).toFixed(2)}%\n`;
+    if (params.defenderAction === 'evasion') {
+        output += `   Áp dụng Evasion: ${(hitRate * 100).toFixed(2)}% * (1 - ${(params.evasion * 100).toFixed(2)}%) = ${(hitRate * (1 - params.evasion) * 100).toFixed(2)}%\n`;
+    }
+    output += `   Áp dụng Acc Modifier: +${(params.accModifier * 100).toFixed(2)}%\n`;
+    output += `   Áp dụng Eva Modifier: -${(params.evaModifier * 100).toFixed(2)}%\n`;
+    output += `   Final Accuracy: ${(finalAcc * 100).toFixed(2)}%\n`;
     output += '</pre>';
 
     // Hiển thị công thức tính hit-rate
@@ -217,13 +238,16 @@ function showHelp() {
                     <li><span class="element">Khác:</span> <span class="description">Không có hiệu ứng đặc biệt.</span></li>
                 </ul>
             </li>
+            <li><strong>Acc Modifier:</strong> <span class="description">Điều chỉnh độ chính xác của người tấn công (%).</span></li>
         </ul>
         <h4 class="defender">Người Phòng Thủ (Defender):</h4>
         <ul>
             <li><strong>DEF:</strong> <span class="description">Chỉ số phòng thủ của người phòng thủ.</span></li>
             <li><strong>HP hiện tại:</strong> <span class="description">Lượng máu hiện tại của người phòng thủ.</span></li>
             <li><strong>HP tối đa:</strong> <span class="description">Lượng máu tối đa của người phòng thủ.</span></li>
-            <li><strong>Block:</strong> <span class="description">Chọn có block hay không (nếu có, DEF được nhân đôi).</span></li>
+            <li><strong>Hành động:</strong> <span class="description">Chọn hành động của người phòng thủ (Không hành động, Block, hoặc Né tránh).</span></li>
+            <li><strong>Evasion:</strong> <span class="description">Tỷ lệ né tránh của người phòng thủ (%) khi chọn hành động Né tránh.</span></li>
+            <li><strong>Eva Modifier:</strong> <span class="description">Điều chỉnh khả năng né tránh của người phòng thủ (%). Trừ trực tiếp vào Final Accuracy.</span></li>
             <li><strong>Hiệu ứng:</strong>
                 <ul>
                     <li><span class="effect">Burn:</span> <span class="description">Gây sát thương <span class="value">3% HP tối đa</span>, giảm <span class="value">10% DEF</span>.</span></li>
@@ -231,7 +255,7 @@ function showHelp() {
                     <li><span class="effect">Beam:</span> <span class="description">Giảm <span class="value">20% DEF</span>.</span></li>
                 </ul>
             </li>
-            <li><strong>Giảm sát thương nhận vào (%):</strong> <span class="description">Phần trăm giảm sát thương của người phòng thủ. Sẽ được trừ trực tiếp từ % khuếch đại sát thương của người tấn công.</span></li>
+            <li><strong>Giảm sát thương nhận vào (%):</strong> <span class="description">Phần trăm giảm sát thương của người phòng thủ.</span></li>
         </ul>
         <h4 class="distance">Khoảng Cách:</h4>
         <ul>
@@ -258,6 +282,8 @@ function initializeEventListeners() {
     const closeButton = document.querySelector('.close');
     const weaponTypeSelect = document.getElementById('weaponType');
     const rangedWeaponTypeSelect = document.getElementById('rangedWeaponType');
+    const defenderActionSelect = document.getElementById('defenderAction');
+    const evasionInput = document.getElementById('evasion');
 
     if (calculateButton) {
         calculateButton.addEventListener('click', calculateDamage);
@@ -277,6 +303,16 @@ function initializeEventListeners() {
                 rangedWeaponTypeSelect.style.display = 'block';
             } else {
                 rangedWeaponTypeSelect.style.display = 'none';
+            }
+        });
+    }
+
+    if (defenderActionSelect) {
+        defenderActionSelect.addEventListener('change', function() {
+            if (this.value === 'evasion') {
+                evasionInput.style.display = 'block';
+            } else {
+                evasionInput.style.display = 'none';
             }
         });
     }

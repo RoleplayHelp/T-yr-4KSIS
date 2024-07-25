@@ -12,13 +12,13 @@
             <div class="container">
                 <h2>Người Tấn Công (Attacker)</h2>
                 <input type="number" id="atk" placeholder="ATK">
-                <input type="number" id="dmgBuff" placeholder="Buff khuếch đại sát thương (%, không bắt buộc)">
-                <input type="number" id="penetration" placeholder="Buff xuyên kháng (%, không bắt buộc)">
+                <input type="number" id="dmgBuff" placeholder="Buff khuếch đại sát thương (%)">
+                <input type="number" id="penetration" placeholder="Buff xuyên kháng (%)">
                 <select id="weaponType">
                     <option value="melee">Melee</option>
                     <option value="ranged">Ranged</option>
                 </select>
-                <select id="rangedWeaponType" style="display:none;">
+                <select id="rangedWeaponType" style="display: none;">
                     <option value="mainArmament">Main Armament</option>
                     <option value="secondaryArmament">Secondary Armament</option>
                     <option value="missile">Missile</option>
@@ -29,6 +29,7 @@
                     <option value="explosive">Explosive</option>
                     <option value="other">Khác</option>
                 </select>
+                <input type="number" id="accModifier" placeholder="Acc Modifier (%) (Nếu có)">
             </div>
         </div>
         <div class="column">
@@ -37,24 +38,27 @@
                 <input type="number" id="def" placeholder="DEF">
                 <input type="number" id="currentHP" placeholder="HP hiện tại">
                 <input type="number" id="maxHP" placeholder="HP tối đa">
-                <select id="block">
-                    <option value="false">Không block</option>
-                    <option value="true">Có block</option>
+                <select id="defenderAction">
+                    <option value="none">Không hành động</option>
+                    <option value="block">Block</option>
+                    <option value="evasion">Né tránh</option>
                 </select>
+                <input type="number" id="evasion" placeholder="Evasion (%)" style="display: none;">
+				<input type="number" id="evaModifier" placeholder="Eva Modifier (%) (Nếu có)">
                 <select id="defenderElement">
                     <option value="none">Không có hiệu ứng</option>
                     <option value="burn">Burn</option>
                     <option value="poison">Poison</option>
                     <option value="beam">Beam</option>
                 </select>
-                <input type="number" id="damageReduction" placeholder="Giảm sát thương nhận vào (%, Không bắt buộc)">
+                <input type="number" id="damageReduction" placeholder="Giảm sát thương nhận vào (%)">
             </div>
         </div>
     </div>
 
     <div class="container">
         <h2>Khoảng Cách và Hit-rate</h2>
-        <input type="number" id="distance" placeholder="Khoảng cách giữa 2 mecha (m)">
+        <input type="number" id="distance" placeholder="Khoảng cách (m)">
     </div>
 
     <div id="errorMessage" style="color: red; margin-bottom: 10px; display: none;"></div>
@@ -67,15 +71,12 @@
         © 2024 Damage Calculator. Bản quyền thuộc về Discord: rafine7262
     </div>
 
-    <button id="helpButton" class="help-button">Help</button>
+    <button id="helpButton" class="help-button" onclick="showHelp()">Help</button>
 
     <div id="helpModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>Hướng dẫn sử dụng Damage Calculator</h3>
-            <div id="helpContent">
-                <!-- Nội dung hướng dẫn sẽ được thêm vào đây bằng JavaScript -->
-            </div>
+            <span class="close" onclick="closeHelp()">&times;</span>
+            <div id="helpContent"></div>
         </div>
     </div>
 

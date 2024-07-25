@@ -220,3 +220,14 @@ pre {
 .modal-content .effect {
     color: #3498db;
 }
+
+#evasion, #accModifier, #evaModifier {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #3a3a3a;
+    color: #ffffff;
+}
