@@ -111,20 +111,21 @@ function calculateDamage() {
     // Tính toán hit-rate
     let baseHitRate = 1;
     const maxRange = weaponType === 'melee' ? 15 : 70;
-    if (distance > maxRange) {
-        baseHitRate = 0;
-    } else {
+    let finalHitRate;
+    if (distance <= maxRange) {
         const hitRateReduction = Math.floor(distance / (maxRange / 3)) * 0.2;
         baseHitRate = Math.max(0, 1 - hitRateReduction);
-    }
 
-    // Áp dụng Evasion và các modifier
-    let finalHitRate = baseHitRate;
-    if (defenderAction === 'evasion') {
-        finalHitRate *= (1 - evasion);
+        // Áp dụng công thức mới
+        finalHitRate = baseHitRate + accModifier - evaModifier;
+        if (defenderAction === 'evasion') {
+            finalHitRate *= (1 - evasion);
+        }
+        finalHitRate = Math.max(0, Math.min(1, finalHitRate)); // Đảm bảo hit-rate nằm trong khoảng [0, 1]
+    } else {
+        // Nếu vượt quá phạm vi tấn công, Hit rate = 0%
+        finalHitRate = 0;
     }
-    finalHitRate += accModifier - evaModifier;
-    finalHitRate = Math.max(0, Math.min(1, finalHitRate)); // Đảm bảo hit-rate nằm trong khoảng [0, 1]
 
     // Hiển thị kết quả
     displayResults(finalDamage, finalHitRate, dotDamage, {
@@ -184,13 +185,19 @@ function displayResults(damage, hitRate, dotDamage, params) {
     output += `7. Sát thương cuối cùng = Max(0, Sát thương - Phòng thủ hiệu quả) = ${damage.toFixed(2)}\n`;
     
     output += `\n8. Tính toán Hit-rate:\n`;
-    output += `   Base Hit-rate: ${(params.baseHitRate * 100).toFixed(2)}%\n`;
-    if (params.defenderAction === 'evasion') {
-        output += `   Áp dụng Evasion: ${(params.baseHitRate * 100).toFixed(2)}% * (1 - ${(params.evasion * 100).toFixed(2)}%) = ${(params.baseHitRate * (1 - params.evasion) * 100).toFixed(2)}%\n`;
+    if (params.distance <= (params.weaponType === 'melee' ? 15 : 70)) {
+        output += `   Base Hit-rate: ${(params.baseHitRate * 100).toFixed(2)}%\n`;
+        output += `   Áp dụng Acc Modifier: +${(params.accModifier * 100).toFixed(2)}%\n`;
+        output += `   Áp dụng Eva Modifier: -${(params.evaModifier * 100).toFixed(2)}%\n`;
+        let intermediateHitRate = params.baseHitRate + params.accModifier - params.evaModifier;
+        output += `   Hit-rate sau khi áp dụng modifier: ${(intermediateHitRate * 100).toFixed(2)}%\n`;
+        if (params.defenderAction === 'evasion') {
+            output += `   Áp dụng Evasion: ${(intermediateHitRate * 100).toFixed(2)}% * (1 - ${(params.evasion * 100).toFixed(2)}%) = ${(intermediateHitRate * (1 - params.evasion) * 100).toFixed(2)}%\n`;
+        }
+        output += `   Final Hit-rate: ${(hitRate * 100).toFixed(2)}%\n`;
+    } else {
+        output += `   Khoảng cách (${params.distance.toFixed(2)}m) vượt quá tầm đánh tối đa (${params.weaponType === 'melee' ? 15 : 70}m), Hit-rate = 0%\n`;
     }
-    output += `   Áp dụng Acc Modifier: +${(params.accModifier * 100).toFixed(2)}%\n`;
-    output += `   Áp dụng Eva Modifier: -${(params.evaModifier * 100).toFixed(2)}%\n`;
-    output += `   Final Hit-rate: ${(hitRate * 100).toFixed(2)}%\n`;
     output += '</pre>';
 
     resultElement.innerHTML = output;
@@ -233,7 +240,7 @@ function showHelp() {
             <li><strong>HP tối đa:</strong> <span class="description">Lượng máu tối đa của người phòng thủ.</span></li>
             <li><strong>Hành động:</strong> <span class="description">Chọn hành động của người phòng thủ (Không hành động, Block, hoặc Né tránh).</span></li>
             <li><strong>Evasion:</strong> <span class="description">Tỷ lệ né tránh của người phòng thủ (%) khi chọn hành động Né tránh.</span></li>
-            <li><strong>Eva Modifier:</strong> <span class="description">Điều chỉnh khả năng né tránh của người phòng thủ (%). Trừ trực tiếp vào Final Accuracy.</span></li>
+            <li><strong>Eva Modifier:</strong> <span class="description">Điều chỉnh khả năng né tránh của người phòng thủ (%). Trừ trực tiếp vào Hit-rate.</span></li>
             <li><strong>Hiệu ứng:</strong>
                 <ul>
                     <li><span class="effect">Burn:</span> <span class="description">Gây sát thương <span class="value">3% HP tối đa</span>, giảm <span class="value">10% DEF</span>.</span></li>
@@ -249,7 +256,9 @@ function showHelp() {
             <li><span class="description">Khoảng cách tối đa: Melee <span class="value">15m</span>, Ranged <span class="value">70m</span>. Vượt quá sẽ có hit-rate 0%.</span></li>
         </ul>
         <h4>Cách tính Hit-rate:</h4>
-        <p class="description">Hit-rate giảm <span class="value">20%</span> cho mỗi <span class="value">1/3</span> tầm đánh của vũ khí. Tầm đánh: Melee <span class="value">15m</span>, Ranged <span class="value">70m</span>.</p>
+        <p class="description">Hit-rate = (Base hit-rate + Acc modifier - Eva modifier) * (1 - Evasion rate nếu dùng Eva)</p>
+        <p class="description">Base hit-rate giảm <span class="value">20%</span> cho mỗi <span class="value">1/3</span> tầm đánh của vũ khí.</p>
+        <p class="description">Nếu khoảng cách vượt quá tầm đánh tối đa, Hit-rate = 0%.</p>
     `;
     
     modal.style.display = "block";
