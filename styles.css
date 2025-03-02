@@ -5,6 +5,7 @@ body {
     padding: 20px;
     background-color: #1a1a1a;
     color: #e0e0e0;
+    font-size: 16px;
 }
 
 .container {
@@ -30,6 +31,11 @@ h2 {
     padding-bottom: 10px;
 }
 
+h3 {
+    color: #b0b0b0;
+    margin-bottom: 10px;
+}
+
 input, select {
     width: 100%;
     padding: 8px;
@@ -39,10 +45,11 @@ input, select {
     box-sizing: border-box;
     background-color: #3a3a3a;
     color: #ffffff;
+    font-size: 1rem;
 }
 
 input::placeholder, select::placeholder {
-    color: #a0a0a0;
+    color: #cccccc;
     opacity: 1;
 }
 
@@ -59,6 +66,13 @@ button {
 
 button:hover {
     background-color: #3498db;
+}
+
+button[onclick="rollDice()"] {
+    background-color: #9b59b6;
+}
+button[onclick="rollDice()"]:hover {
+    background-color: #8e44ad;
 }
 
 #result {
@@ -110,13 +124,12 @@ button:hover {
     right: 20px;
     padding: 10px 20px;
     background-color: #2ecc71;
-    color: #000000;
+    color: #ffffff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
-    text-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
     transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
@@ -169,6 +182,11 @@ button:hover {
 #errorMessage {
     color: #ff6b6b;
     margin-bottom: 10px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0.5; }
 }
 
 pre {
@@ -208,20 +226,11 @@ pre {
 .modal-content .weapon { color: #9b59b6; }
 .modal-content .element { color: #1abc9c; }
 .modal-content .distance { color: #f1c40f; }
+.modal-content .description { color: #bdc3c7; }
+.modal-content .value { color: #e74c3c; }
+.modal-content .effect { color: #3498db; }
 
-.modal-content .description {
-    color: #bdc3c7;
-}
-
-.modal-content .value {
-    color: #e74c3c;
-}
-
-.modal-content .effect {
-    color: #3498db;
-}
-
-#evasion, #accModifier, #evaModifier {
+#evasion, #accModifier, #evaModifier, #diceThreshold {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
@@ -230,4 +239,14 @@ pre {
     box-sizing: border-box;
     background-color: #3a3a3a;
     color: #ffffff;
+}
+
+@media (max-width: 600px) {
+    .row {
+        flex-direction: column;
+    }
+    .column {
+        width: 100%;
+        margin-bottom: 20px;
+    }
 }
